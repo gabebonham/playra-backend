@@ -1,6 +1,6 @@
 package com.grote.mediaprocessing.common.config;
 
-import com.grote.mediaprocessing.common.enums.MediaType;
+import com.grote.common.enums.MediaType;
 import com.grote.mediaprocessing.processor.MediaProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

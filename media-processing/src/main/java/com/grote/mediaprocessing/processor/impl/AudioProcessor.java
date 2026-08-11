@@ -28,7 +28,7 @@ public class AudioProcessor implements MediaProcessor {
     @Override
     public void process(String bucketPath) {
         try {
-            Path rawFile = storage.fetchToTempFile(bucketPath);
+            Path rawFile = this.storage.fetchToTempFile(bucketPath);
             Path outputDir = Files.createTempDirectory("hls-");
 
             this.runFfmpegHlsSegmentation(rawFile, outputDir);
@@ -64,7 +64,7 @@ public class AudioProcessor implements MediaProcessor {
         try (var files = Files.list(outputDir)) {
             for (Path file : files.toList()) {
                 String destination = "processed/" + "/" + file.getFileName();
-                uploadedPaths.add(storage.transferFile(file, destination));
+                uploadedPaths.add(this.storage.transferFile(file, destination));
             }
         }
         return uploadedPaths;

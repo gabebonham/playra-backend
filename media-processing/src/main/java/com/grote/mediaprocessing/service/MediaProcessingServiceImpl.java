@@ -1,6 +1,6 @@
 package com.grote.mediaprocessing.service;
 
-import com.grote.mediaprocessing.common.enums.MediaType;
+import com.grote.common.enums.MediaType;
 import com.grote.mediaprocessing.common.exception.UnsupportedMediaTypeException;
 import com.grote.mediaprocessing.processor.MediaProcessor;
 import lombok.RequiredArgsConstructor;
