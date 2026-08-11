@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -15,14 +16,12 @@ public class MediaProcessingServiceImpl implements MediaProcessingServiceInterfa
     private final Map<MediaType, MediaProcessor> mediaProcessors;
 
     @Override
-    public void process(String bucketPath, String type) {
-
-        MediaProcessor processor = this.mediaProcessors.get(MediaType.fromValue(type));
+    public void process(UUID mediaId, String bucketPath, MediaType type) {
+        MediaProcessor processor = mediaProcessors.get(type);
         if (processor == null) {
-            throw new UnsupportedMediaTypeException("No processor for media type: " + type);
+            throw new UnsupportedMediaTypeException("No processor for type: " + type);
         }
-
-        processor.process(bucketPath);
+        processor.process(mediaId, bucketPath);
     }
 
 }

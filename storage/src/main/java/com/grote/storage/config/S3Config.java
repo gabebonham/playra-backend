@@ -7,15 +7,13 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 import java.net.URI;
 
 @Configuration
 public class S3Config {
-
-    @Value("${aws.s3.region}")
-    private String region;
 
     @Value("${aws.s3.endpoint}")
     private String endpoint;
@@ -26,26 +24,36 @@ public class S3Config {
     @Value("${aws.s3.secret-key}")
     private String secretKey;
 
+    @Value("${aws.s3.region}")
+    private String region;
+
+    private StaticCredentialsProvider credentialsProvider() {
+        return StaticCredentialsProvider.create(
+                AwsBasicCredentials.create(accessKey, secretKey)
+        );
+    }
+
     @Bean
     public S3Client s3Client() {
         return S3Client.builder()
-                .region(Region.of(region))
                 .endpointOverride(URI.create(endpoint))
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(accessKey, secretKey)))
-                .forcePathStyle(true)
+                .credentialsProvider(credentialsProvider())
+                .region(Region.of(region))
+                .serviceConfiguration(S3Configuration.builder()
+                        .pathStyleAccessEnabled(true) // obrigatório pro MinIO
+                        .build())
                 .build();
     }
-    @Bean
-    public S3Presigner s3Presigner(
-            @Value("${aws.access-key}") String accessKey,
-            @Value("${aws.secret-key}") String secretKey,
-            @Value("${aws.region}") String region) {
 
+    @Bean
+    public S3Presigner s3Presigner() {
         return S3Presigner.builder()
+                .endpointOverride(URI.create(endpoint))
+                .credentialsProvider(credentialsProvider())
                 .region(Region.of(region))
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(accessKey, secretKey)))
+                .serviceConfiguration(S3Configuration.builder()
+                        .pathStyleAccessEnabled(true)
+                        .build())
                 .build();
     }
 }

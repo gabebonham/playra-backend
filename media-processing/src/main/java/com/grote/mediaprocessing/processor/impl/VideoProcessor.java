@@ -4,6 +4,8 @@ import com.grote.common.enums.MediaType;
 import com.grote.mediaprocessing.processor.MediaProcessor;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class VideoProcessor implements MediaProcessor {
     @Override
@@ -11,7 +13,7 @@ public class VideoProcessor implements MediaProcessor {
         return MediaType.VIDEO;
     }
     @Override
-    public void process(String bucketPath) {
+    public void process(UUID mediaId, String bucketPath) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 }

@@ -1,4 +1,4 @@
-package com.grote.mediaingestion.config;
+package com.grote.app.common.config;
 
 import com.grote.mediaingestion.common.ApiResponse;
 import org.springframework.core.MethodParameter;

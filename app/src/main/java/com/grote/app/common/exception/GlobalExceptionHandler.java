@@ -2,6 +2,7 @@ package com.grote.app.common.exception;
 
 import com.grote.app.common.ApiResponse;
 import com.grote.delivery.exception.MediaNotReadyException;
+import com.grote.mediacatalog.common.exception.MediaNotFoundException;
 import com.grote.mediaingestion.common.exception.InvalidFileException;
 import com.grote.mediaingestion.common.exception.UploadFileException;
 import com.grote.mediaprocessing.common.exception.UnsupportedMediaTypeException;
@@ -36,13 +37,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UploadFileException.class)
     public ResponseEntity<ApiResponse<Void>> handleFileUpload(UploadFileException ex) {
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
                 .body(ApiResponse.error(ex.getMessage()));
     }
     @ExceptionHandler(MediaNotReadyException.class)
     public ResponseEntity<ApiResponse<Void>> handleMediaNotReady(MediaNotReadyException ex) {
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(ApiResponse.error(ex.getMessage()));
+    }
+    @ExceptionHandler(MediaNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMediaNotReady(MediaNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.error(ex.getMessage()));
     }
 

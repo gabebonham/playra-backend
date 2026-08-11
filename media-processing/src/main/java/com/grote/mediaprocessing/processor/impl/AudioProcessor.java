@@ -1,9 +1,11 @@
 package com.grote.mediaprocessing.processor.impl;
 
 import com.grote.common.enums.MediaType;
+import com.grote.mediacatalog.service.MediaCatalogService;
 import com.grote.storage.integration.S3StorageIntegration;
 import com.grote.mediaprocessing.processor.MediaProcessor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -13,11 +15,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class AudioProcessor implements MediaProcessor {
+
     private final S3StorageIntegration storage;
+    private final MediaCatalogService catalogService;
 
     @Override
     public MediaType getType() {
@@ -26,17 +32,26 @@ public class AudioProcessor implements MediaProcessor {
 
     @Async
     @Override
-    public void process(String bucketPath) {
+    public void process(UUID mediaId, String bucketPath) {
         try {
-            Path rawFile = this.storage.fetchToTempFile(bucketPath);
-            Path outputDir = Files.createTempDirectory("hls-");
+            Path rawFile = storage.fetchToTempFile(bucketPath);
+            Path outputDir = Files.createTempDirectory("hls-" + mediaId);
 
             this.runFfmpegHlsSegmentation(rawFile, outputDir);
-            this.uploadAllSegments(outputDir);
+            List<String> uploadedPaths = this.uploadAllSegments(outputDir, mediaId);
+
+            String manifestPath = uploadedPaths.stream()
+                    .filter(path -> path.endsWith(".m3u8"))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Manifest not found among uploaded files"));
+
+            this.catalogService.markAsAvailable(mediaId, manifestPath);
 
             this.cleanup(rawFile, outputDir);
 
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.error("Failed to process media {}", mediaId, e);
+            catalogService.markAsFailed(mediaId);
         }
     }
 
@@ -53,18 +68,22 @@ public class AudioProcessor implements MediaProcessor {
                 .redirectErrorStream(true)
                 .start();
 
+        try (var reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()))) {
+            reader.lines().forEach(line -> log.debug("[ffmpeg] {}", line));
+        }
+
         int exitCode = process.waitFor();
         if (exitCode != 0) {
             throw new RuntimeException("FFmpeg failed with code " + exitCode);
         }
     }
 
-    private List<String> uploadAllSegments(Path outputDir) throws IOException {
+    private List<String> uploadAllSegments(Path outputDir, UUID mediaId) throws IOException {
         List<String> uploadedPaths = new ArrayList<>();
         try (var files = Files.list(outputDir)) {
             for (Path file : files.toList()) {
-                String destination = "processed/" + "/" + file.getFileName();
-                uploadedPaths.add(this.storage.transferFile(file, destination));
+                String destination = "processed/" + mediaId + "/" + file.getFileName();
+                uploadedPaths.add(storage.transferFile(file, destination));
             }
         }
         return uploadedPaths;
@@ -76,7 +95,8 @@ public class AudioProcessor implements MediaProcessor {
             Files.walk(outputDir)
                     .sorted(Comparator.reverseOrder())
                     .forEach(p -> p.toFile().delete());
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            log.warn("Failed to clean up temp files", e);
         }
     }
 }

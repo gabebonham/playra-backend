@@ -1,6 +1,24 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: playra-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: playra
+      POSTGRES_PASSWORD: playra
+      POSTGRES_DB: playra
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U playra"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   minio:
     image: minio/minio:latest
     container_name: minio-storage
@@ -27,3 +45,4 @@ services:
 
 volumes:
   minio-data:
+  postgres-data:

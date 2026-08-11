@@ -20,9 +20,11 @@ repositories {
 
 dependencies {
     implementation project(':storage')
+    implementation project(':media-catalog')
     implementation project(':common')
     implementation 'org.springframework.boot:spring-boot-starter'
     testCompileOnly 'org.projectlombok:lombok'
+    implementation 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'

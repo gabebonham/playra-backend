@@ -54,7 +54,7 @@ public class S3StorageIntegration {
 
     public Path fetchToTempFile(String bucketPath) {
         try {
-            Path tempFile = Files.createTempFile("media-", ".tmp");
+            Path tempFile = Files.createTempDirectory("media-").resolve("raw" + getExtension(bucketPath));
             s3Client.getObject(
                     GetObjectRequest.builder().bucket(bucketName).key(bucketPath).build(),
                     tempFile
@@ -105,6 +105,7 @@ public class S3StorageIntegration {
 
     private String getExtension(String filename) {
         if (filename == null || !filename.contains(".")) return "";
-        return filename.substring(filename.lastIndexOf('.'));
+        String ext = filename.substring(filename.lastIndexOf('.'));
+        return ext.replaceAll("\\s+", "");
     }
 }
