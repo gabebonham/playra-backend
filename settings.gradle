@@ -1,8 +1,11 @@
 rootProject.name = 'playra'
 
 include 'app'
+include 'common'
+include 'delivery'
 include 'engagement'
 include 'media-catalog'
 include 'media-ingestion'
 include 'media-processing'
+include 'storage'
 include 'user'

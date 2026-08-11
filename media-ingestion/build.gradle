@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     implementation project(':media-processing')
-    implementation 'software.amazon.awssdk:s3:2.25.11'
+    implementation project(':storage')
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     compileOnly 'org.projectlombok:lombok'

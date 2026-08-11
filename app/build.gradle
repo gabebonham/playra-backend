@@ -19,11 +19,15 @@ repositories {
 }
 
 dependencies {
+    implementation project(':delivery')
     implementation project(':engagement')
     implementation project(':media-catalog')
     implementation project(':media-ingestion')
     implementation project(':media-processing')
+    implementation project(':storage')
     implementation project(':user')
+    compileOnly 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

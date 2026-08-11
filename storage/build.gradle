@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.grote'
 version = '0.0.1-SNAPSHOT'
-description = 'media-processing'
+description = 'storage'
 
 java {
     toolchain {
@@ -19,13 +19,15 @@ repositories {
 }
 
 dependencies {
-    implementation project(':storage')
-    implementation project(':common')
+    implementation 'software.amazon.awssdk:s3:2.25.11'
     implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.projectlombok:lombok'
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testCompileOnly 'org.projectlombok:lombok'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
