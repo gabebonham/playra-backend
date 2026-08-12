@@ -4,6 +4,8 @@ CREATE TABLE IF NOT EXISTS media (
     type            VARCHAR(20)  NOT NULL,
     status          VARCHAR(20)  NOT NULL,
     manifest_path   VARCHAR(500),
+    image_url       VARCHAR(500),
+    description     TEXT,
     created_at      TIMESTAMP    NOT NULL DEFAULT now(),
     processed_at    TIMESTAMP,
 

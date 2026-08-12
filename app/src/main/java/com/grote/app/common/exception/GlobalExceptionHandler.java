@@ -1,9 +1,10 @@
 package com.grote.app.common.exception;
 
 import com.grote.app.common.ApiResponse;
+import com.grote.common.exception.InvalidFileException;
 import com.grote.delivery.exception.MediaNotReadyException;
 import com.grote.mediacatalog.common.exception.MediaNotFoundException;
-import com.grote.mediaingestion.common.exception.InvalidFileException;
+import com.grote.common.exception.WrongEnumValueException;
 import com.grote.mediaingestion.common.exception.UploadFileException;
 import com.grote.mediaprocessing.common.exception.UnsupportedMediaTypeException;
 import com.grote.storage.common.exception.StorageException;
@@ -48,6 +49,12 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(MediaNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleMediaNotReady(MediaNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(ex.getMessage()));
+    }
+    @ExceptionHandler(WrongEnumValueException.class)
+    public ResponseEntity<ApiResponse<Void>> handleWrongEnumValue(WrongEnumValueException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.error(ex.getMessage()));

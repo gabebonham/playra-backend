@@ -22,6 +22,9 @@ public class MediaEntity {
     @Column(nullable = false)
     private String title;
 
+    @Column()
+    private String description;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private MediaType type;
@@ -33,9 +36,13 @@ public class MediaEntity {
     @Column(name = "manifest_path", length = 500)
     private String manifestPath;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
     @Column(name = "processed_at")
     private Instant processedAt;
+
 }

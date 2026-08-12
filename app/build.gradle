@@ -19,6 +19,7 @@ repositories {
 }
 
 dependencies {
+    implementation project(':common')
     implementation project(':delivery')
     implementation project(':engagement')
     implementation project(':media-catalog')

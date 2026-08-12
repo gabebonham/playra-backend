@@ -1,4 +1,4 @@
-package com.grote.mediaingestion.common.exception;
+package com.grote.common.exception;
 
 public class InvalidFileException extends RuntimeException {
     public InvalidFileException(String message) {

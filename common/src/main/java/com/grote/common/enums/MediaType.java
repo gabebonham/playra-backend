@@ -1,5 +1,6 @@
 package com.grote.common.enums;
 
+import com.grote.common.exception.WrongEnumValueException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -19,6 +20,6 @@ public enum MediaType {
         return EnumSet.allOf(MediaType.class).stream()
                 .filter((mediaType -> mediaType.getName().equals(value)))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(()-> new WrongEnumValueException("Invalid value for enum."));
     }
 }
